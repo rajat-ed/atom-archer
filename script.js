@@ -1,8 +1,7 @@
-window.addEventListener('load', () => { //Ensure that everything is loaded
+window.addEventListener('load', () => {
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
 
-    // Ensure Canvas has the correct dimensions *before* drawing
     canvas.width = 800;
     canvas.height = 750;
 
@@ -105,33 +104,41 @@ window.addEventListener('load', () => { //Ensure that everything is loaded
         }
     }
 
- function updateAtom(atom) {
-        atom.y += atom.speed;
-        if (atom.y > canvas.height) {
-            lives--;
-            updateLivesDisplay();
-
-           return true
+    function updateAtom(atom) {
+        try {
+            atom.y += atom.speed;
+            if (atom.y > canvas.height) {
+                lives--;
+                updateLivesDisplay();
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.error("Error in updateAtom:", e);
+            return true;
         }
-          return false; // Atom is still in play
     }
 
     function renderAtom(atom) {
-        const fontSize = 12;
-        ctx.fillStyle = atom.color;
-        ctx.beginPath();
-        drawShape(ctx, atom.x, atom.y, atom.element.shape, 25);
-        ctx.fill();
+         try {
+            const fontSize = 12;
+            ctx.fillStyle = atom.color;
+            ctx.beginPath();
+            drawShape(ctx, atom.x, atom.y, atom.element.shape, 25);
+            ctx.fill();
 
-        ctx.font = `${fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`;
-        ctx.fillStyle = atom.textColor;
-        ctx.textAlign = 'center';
+            ctx.font = `${fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`;
+            ctx.fillStyle = atom.textColor;
+            ctx.textAlign = 'center';
 
-        ctx.fillText(atom.element.number, atom.x, atom.y - fontSize);
-        ctx.fillText(atom.element.weight.toFixed(2), atom.x, atom.y + fontSize);
-        ctx.fillText(atom.element.valency, atom.x + 15, atom.y);
+            ctx.fillText(atom.element.number, atom.x, atom.y - fontSize);
+            ctx.fillText(atom.element.weight.toFixed(2), atom.x, atom.y + fontSize);
+            ctx.fillText(atom.element.valency, atom.x + 15, atom.y);
 
-        ctx.closePath();
+            ctx.closePath();
+        } catch (e) {
+            console.error("Error in renderAtom:", e);
+        }
     }
 
     function drawShape(ctx, x, y, shape, size) {
@@ -317,8 +324,8 @@ window.addEventListener('load', () => { //Ensure that everything is loaded
         ctx.closePath();
     }
 
-   function gameLoop() {
-    try {
+    function gameLoop() {
+       try {
         if (!isPaused) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -337,25 +344,26 @@ window.addEventListener('load', () => { //Ensure that everything is loaded
                 }
             }
 
-            for (let i = atoms.length - 1; i >= 0; i--) {
+          for (let i = atoms.length - 1; i >= 0; i--) {
                 const atom = atoms[i];
                 const shouldDelete = updateAtom(atom);
 
-                if (shouldDelete) {
-                    atoms.splice(i, 1);
+                 if (shouldDelete) {
+                     atoms.splice(i, 1);
                 }
-            }
-
            if (lives <= 0) {
-                endGame();
-            }
+                 endGame();
+                   break;
+           }
         }
-        }
-         catch (e) {
-             console.error("Game loop error:", e);
-             clearInterval(gameInterval);
-             alert("A critical error occurred. Please refresh the page.");
+    }
          }
+           catch (e) {
+               console.error("Game loop error:", e);
+               clearInterval(gameInterval);
+                alert("A critical error occurred. Please refresh the page.");
+             }
+
 }
 
     function endGame() {
@@ -365,8 +373,6 @@ window.addEventListener('load', () => { //Ensure that everything is loaded
     }
 
     document.addEventListener('keydown', (event) => {
-        if (inputField.disabled) return;
-
         if (event.key === 'Enter') {
             checkInput(inputField.value);
             inputField.value = '';
@@ -395,15 +401,19 @@ window.addEventListener('load', () => { //Ensure that everything is loaded
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    function initialSetup() {
-        //Explicitly set canvas dimensions
-        canvas.width = 800;
-        canvas.height = 750;
+     function initialSetup() {
+         try {
+            //Explicitly set canvas dimensions
+            canvas.width = 800;
+            canvas.height = 750;
 
-        //Initialize everything
-        startGame();
-    }
+            //Initialize everything
+            startGame();
+         } catch (e) {
+            console.error("Setup error:", e);
+            alert("A critical error occurred during setup. Please refresh the page.");
+         }
+        }
 
-    initialSetup(); //Call the setup here.
-
-});
+        initialSetup();
+    });
