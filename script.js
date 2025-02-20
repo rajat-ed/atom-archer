@@ -1,16 +1,17 @@
-document.addEventListener('DOMContentLoaded', () => {
+window.addEventListener('load', () => { //Ensure that everything is loaded
     const canvas = document.getElementById('gameCanvas');
     const ctx = canvas.getContext('2d');
+
+    // Ensure Canvas has the correct dimensions *before* drawing
+    canvas.width = 800;
+    canvas.height = 750;
+
     const inputField = document.getElementById('inputField');
     const scoreDisplay = document.getElementById('score');
     const livesDisplay = document.getElementById('livesDisplay');
     const gameOverCard = document.getElementById('gameOverCard');
     const finalScoreDisplay = document.getElementById('finalScore');
     const restartButton = document.getElementById('restartButton');
-
-    //Canvas dimensions, fixed on JS so there are no confusions
-    canvas.width = 800;
-    canvas.height = 750;
 
     let score = 0;
     let lives = 5;
@@ -21,36 +22,36 @@ document.addEventListener('DOMContentLoaded', () => {
     const maxAtoms = 7;
 
     const elements = [
-        { number: 1, symbol: 'H', name: 'Hydrogen', weight: 1.008, valency: 1, color: '#455A64', shape: 'circle' },
-        { number: 2, symbol: 'He', name: 'Helium', weight: 4.0026, valency: 0, color: '#5D4037', shape: 'square' },
-        { number: 3, symbol: 'Li', name: 'Lithium', weight: 6.94, valency: 1, color: '#2E7D32', shape: 'triangle' },
-        { number: 4, symbol: 'Be', name: 'Beryllium', weight: 9.012182, valency: 2, color: '#0277BD', shape: 'rectangle' },
-        { number: 5, symbol: 'B', name: 'Boron', weight: 10.81, valency: 3, color: '#F9A825', shape: 'pentagon' },
-        { number: 6, symbol: 'C', name: 'Carbon', weight: 12.011, valency: 4, color: '#6A1B9A', shape: 'hexagon' },
-        { number: 7, symbol: 'N', name: 'Nitrogen', weight: 14.007, valency: 3, color: '#880E4F', shape: 'star' },
-        { number: 8, symbol: 'O', name: 'Oxygen', weight: 15.999, valency: 2, color: '#BF360C', shape: 'rhombus' },
-        { number: 9, symbol: 'F', name: 'Fluorine', weight: 18.998403163, valency: 1, color: '#3E2723', shape: 'ellipse' },
-        { number: 10, symbol: 'Ne', name: 'Neon', weight: 20.180, valency: 0, color: '#1A237E', shape: 'parallelogram' },
-        { number: 11, symbol: 'Na', name: 'Sodium', weight: 22.990, valency: 1, color: '#00695C', shape: 'trapezoid' },
-        { number: 12, symbol: 'Mg', name: 'Magnesium', weight: 24.305, valency: 2, color: '#263238', shape: 'octagon' },
-        { number: 13, symbol: 'Al', name: 'Aluminum', weight: 26.9815384, valency: 3, color: '#424242', shape: 'decagon' },
-        { number: 14, symbol: 'Si', name: 'Silicon', weight: 28.085, valency: 4, color: '#0D47A1', shape: 'septagon' },
-        { number: 15, symbol: 'P', name: 'Phosphorus', weight: 30.973761998, valency: 3, color: '#B71C1C', shape: 'heart' },
-        { number: 16, symbol: 'S', name: 'Sulfur', weight: 32.06, valency: 2, color: '#827717', shape: 'invtriangle' },
-        { number: 17, symbol: 'Cl', name: 'Chlorine', weight: 35.45, valency: 1, color: '#E65100', shape: 'shield' },
-        { number: 18, symbol: 'Ar', name: 'Argon', weight: 39.948, valency: 0, color: '#33691E', shape: 'invcircle' },
-        { number: 19, symbol: 'K', name: 'Potassium', weight: 39.0983, valency: 1, color: '#8E24AA', shape: 'flower' },
-        { number: 20, symbol: 'Ca', name: 'Calcium', weight: 40.078, valency: 2, color: '#1B5E20', shape: 'drop' },
-        { number: 21, symbol: 'Sc', name: 'Scandium', weight: 44.955908, valency: 3, color: '#00838F', shape: 'infinity' },
-        { number: 22, symbol: 'Ti', name: 'Titanium', weight: 47.867, valency: 4, color: '#311B92', shape: 'moon' },
-        { number: 23, symbol: 'V', name: 'Vanadium', weight: 50.9415, valency: 5, color: '#3E5D4F', shape: 'cross' },
-        { number: 24, symbol: 'Cr', name: 'Chromium', weight: 51.9961, valency: 6, color: '#9E9D24', shape: 'lightning' },
-        { number: 25, symbol: 'Mn', name: 'Manganese', weight: 54.938044, valency: 7, color: '#D84315', shape: 'atom' },
-        { number: 26, symbol: 'Fe', name: 'Iron', weight: 55.845, valency: 2, color: '#212121', shape: 'dice' },
-        { number: 27, symbol: 'Co', name: 'Cobalt', weight: 58.933194, valency: 2, color: '#004D40', shape: 'molecule' },
-        { number: 28, symbol: 'Ni', name: 'Nickel', weight: 58.6934, valency: 2, color: '#1A237E', shape: 'barcode' },
-        { number: 29, symbol: 'Cu', name: 'Copper', weight: 63.546, valency: 2, color: '#263238', shape: 'radioactive' },
-        { number: 30, symbol: 'Zn', name: 'Zinc', weight: 65.38, valency: 2, color: '#3E2723', shape: 'chess' }
+      { number: 1, symbol: 'H', name: 'Hydrogen', weight: 1.008, valency: 1, color: '#455A64', shape: 'circle' },
+      { number: 2, symbol: 'He', name: 'Helium', weight: 4.0026, valency: 0, color: '#5D4037', shape: 'square' },
+      { number: 3, symbol: 'Li', name: 'Lithium', weight: 6.94, valency: 1, color: '#2E7D32', shape: 'triangle' },
+      { number: 4, symbol: 'Be', name: 'Beryllium', weight: 9.012182, valency: 2, color: '#0277BD', shape: 'rectangle' },
+      { number: 5, symbol: 'B', name: 'Boron', weight: 10.81, valency: 3, color: '#F9A825', shape: 'pentagon' },
+      { number: 6, symbol: 'C', name: 'Carbon', weight: 12.011, valency: 4, color: '#6A1B9A', shape: 'hexagon' },
+      { number: 7, symbol: 'N', name: 'Nitrogen', weight: 14.007, valency: 3, color: '#880E4F', shape: 'star' },
+      { number: 8, symbol: 'O', name: 'Oxygen', weight: 15.999, valency: 2, color: '#BF360C', shape: 'rhombus' },
+      { number: 9, symbol: 'F', name: 'Fluorine', weight: 18.998403163, valency: 1, color: '#3E2723', shape: 'ellipse' },
+      { number: 10, symbol: 'Ne', name: 'Neon', weight: 20.180, valency: 0, color: '#1A237E', shape: 'parallelogram' },
+      { number: 11, symbol: 'Na', name: 'Sodium', weight: 22.990, valency: 1, color: '#00695C', shape: 'trapezoid' },
+      { number: 12, symbol: 'Mg', name: 'Magnesium', weight: 24.305, valency: 2, color: '#263238', shape: 'octagon' },
+      { number: 13, symbol: 'Al', name: 'Aluminum', weight: 26.9815384, valency: 3, color: '#424242', shape: 'decagon' },
+      { number: 14, symbol: 'Si', name: 'Silicon', weight: 28.085, valency: 4, color: '#0D47A1', shape: 'septagon' },
+      { number: 15, symbol: 'P', name: 'Phosphorus', weight: 30.973761998, valency: 3, color: '#B71C1C', shape: 'heart' },
+      { number: 16, symbol: 'S', name: 'Sulfur', weight: 32.06, valency: 2, color: '#827717', shape: 'invtriangle' },
+      { number: 17, symbol: 'Cl', name: 'Chlorine', weight: 35.45, valency: 1, color: '#E65100', shape: 'shield' },
+      { number: 18, symbol: 'Ar', name: 'Argon', weight: 39.948, valency: 0, color: '#33691E', shape: 'invcircle' },
+      { number: 19, symbol: 'K', name: 'Potassium', weight: 39.0983, valency: 1, color: '#8E24AA', shape: 'flower' },
+      { number: 20, symbol: 'Ca', name: 'Calcium', weight: 40.078, valency: 2, color: '#1B5E20', shape: 'drop' },
+      { number: 21, symbol: 'Sc', name: 'Scandium', weight: 44.955908, valency: 3, color: '#00838F', shape: 'infinity' },
+      { number: 22, symbol: 'Ti', name: 'Titanium', weight: 47.867, valency: 4, color: '#311B92', shape: 'moon' },
+      { number: 23, symbol: 'V', name: 'Vanadium', weight: 50.9415, valency: 5, color: '#3E5D4F', shape: 'cross' },
+      { number: 24, symbol: 'Cr', name: 'Chromium', weight: 51.9961, valency: 6, color: '#9E9D24', shape: 'lightning' },
+      { number: 25, symbol: 'Mn', name: 'Manganese', weight: 54.938044, valency: 7, color: '#D84315', shape: 'atom' },
+      { number: 26, symbol: 'Fe', name: 'Iron', weight: 55.845, valency: 2, color: '#212121', shape: 'dice' },
+      { number: 27, symbol: 'Co', name: 'Cobalt', weight: 58.933194, valency: 2, color: '#004D40', shape: 'molecule' },
+      { number: 28, symbol: 'Ni', name: 'Nickel', weight: 58.6934, valency: 2, color: '#1A237E', shape: 'barcode' },
+      { number: 29, symbol: 'Cu', name: 'Copper', weight: 63.546, valency: 2, color: '#263238', shape: 'radioactive' },
+      { number: 30, symbol: 'Zn', name: 'Zinc', weight: 65.38, valency: 2, color: '#3E2723', shape: 'chess' }
     ];
 
     function startGame() {
@@ -88,7 +89,7 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 
     function createAtom() {
-        if (atoms.length < maxAtoms) {
+        if (atoms.length < 7) {
             const randomIndex = Math.floor(Math.random() * elements.length);
             const element = elements[randomIndex];
             const atom = {
@@ -104,14 +105,15 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     }
 
-    function updateAtom(atom) {
+ function updateAtom(atom) {
         atom.y += atom.speed;
         if (atom.y > canvas.height) {
             lives--;
             updateLivesDisplay();
-            return true; // Signal to remove the atom
+
+           return true
         }
-        return false; // Atom is still in play
+          return false; // Atom is still in play
     }
 
     function renderAtom(atom) {
@@ -315,8 +317,8 @@ document.addEventListener('DOMContentLoaded', () => {
         ctx.closePath();
     }
 
-    function gameLoop() {
-        try {
+   function gameLoop() {
+    try {
         if (!isPaused) {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -335,33 +337,31 @@ document.addEventListener('DOMContentLoaded', () => {
                 }
             }
 
-            //Iterate from the end of the array. That prevents skipping elements after deletion
             for (let i = atoms.length - 1; i >= 0; i--) {
                 const atom = atoms[i];
-                const shouldDelete = updateAtom(atom); //Call updateAtom
+                const shouldDelete = updateAtom(atom);
 
                 if (shouldDelete) {
-                    atoms.splice(i, 1); //If the atom have to be deleted, delete it
+                    atoms.splice(i, 1);
                 }
             }
 
            if (lives <= 0) {
-                endGame(); //Check if the Game Over Condition is reached
+                endGame();
             }
         }
-       }
-    catch (e) {
-        console.error("Game loop error:", e);
-        clearInterval(gameInterval);
-        alert("A critical error occurred. Please refresh the page.");
-    }
+        }
+         catch (e) {
+             console.error("Game loop error:", e);
+             clearInterval(gameInterval);
+             alert("A critical error occurred. Please refresh the page.");
+         }
 }
 
     function endGame() {
         clearInterval(gameInterval);
         finalScoreDisplay.textContent = score;
         gameOverCard.style.display = 'block';
-        inputField.disabled = true;
     }
 
     document.addEventListener('keydown', (event) => {
@@ -395,5 +395,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
-    startGame();
+    function initialSetup() {
+        //Explicitly set canvas dimensions
+        canvas.width = 800;
+        canvas.height = 750;
+
+        //Initialize everything
+        startGame();
+    }
+
+    initialSetup(); //Call the setup here.
+
 });
