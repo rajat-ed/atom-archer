@@ -1,33 +1,32 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Atom Archer</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <h1>Atom Archer</h1>
+<h1>Atom Archer</h1>
 
-    <canvas id="gameCanvas"></canvas>
+<canvas id="gameCanvas" width="800" height="750"></canvas>
 
-    <div id="inputPanel">
-        <div id="livesDisplay"></div>
-        <input type="text" id="inputField" placeholder="Enter atom name or symbol">
-    </div>
+<div id="inputPanel">
+  <div id="livesDisplay"></div>
+  <input type="text" id="inputField" placeholder="Enter atom name or symbol">
+</div>
 
-    <div id="score">Score: 0</div>
+<div id="score">Score: 0</div>
 
-    <div id="creator">Created by Rajat</div>
+<div id="creator">Created by Rajat</div>
 
-    <div id="gameOverCard">
-        <h2>Game Over!</h2>
-        <p>Your Score: <span id="finalScore">0</span></p>
-        <button id="restartButton">Restart Game</button>
-    </div>
+<div id="gameOverCard">
+    <h2>Game Over!</h2>
+    <p>Your Score: <span id="finalScore">0</span></p>
+    <button id="restartButton">Restart Game</button>
+</div>
 
-    <script src="script.js"></script>
+<script src="script.js"></script>
 
 </body>
 </html>
