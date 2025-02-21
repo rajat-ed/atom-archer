@@ -2,13 +2,11 @@ const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 const inputField = document.getElementById('inputField');
 const scoreDisplay = document.getElementById('score');
-const livesDisplay = document.getElementById('livesDisplay');
 const gameOverCard = document.getElementById('gameOverCard');
 const finalScoreDisplay = document.getElementById('finalScore');
 const restartButton = document.getElementById('restartButton');
 
 let score = 0;
-let lives = 5;
 let atoms = [];
 let gameInterval;
 let baseSpeed = 1;
@@ -50,28 +48,15 @@ const elements = [
 
 function startGame() {
     score = 0;
-    lives = 5;
     atoms = [];
     baseSpeed = 1;
     isPaused = false;
     scoreDisplay.textContent = `Score: ${score}`;
-    updateLivesDisplay();
     gameInterval = setInterval(gameLoop, 30);
 
     gameOverCard.style.display = 'none';
 }
 
-function updateLivesDisplay() {
-    livesDisplay.innerHTML = '';
-    for (let i = 0; i < 5; i++) {
-        const heart = document.createElement('div');
-        heart.className = 'lifeHeart';
-        if (i >= lives) {
-            heart.style.opacity = '0.3';
-        }
-        livesDisplay.appendChild(heart);
-    }
-}
 
 function getReadableTextColor(backgroundColor) {
     const r = parseInt(backgroundColor.slice(1, 3), 16);
@@ -101,13 +86,8 @@ function createAtom() {
 function updateAtom(atom) {
     atom.y += atom.speed;
     if (atom.y > canvas.height) {
-        lives--;
-        updateLivesDisplay();
-
-        if (lives <= 0) {
             endGame();
             return true;
-        }
     }
     return false;
 }
@@ -341,11 +321,6 @@ function gameLoop() {
              }
               else {
                  renderAtom(atom);
-              }
-
-             if (lives <= 0) { // Move game over check here
-                 endGame();
-                 return; // Ensure the rest of the loop doesn't execute after game over
               }
     }
 }
