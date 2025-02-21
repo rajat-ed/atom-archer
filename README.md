@@ -30,6 +30,7 @@ Atom Archer is a web-based game built with HTML, CSS, and JavaScript. The goal i
 
 1.  Clone this repository to your local machine.
 2.  Open the `index.html` file in your web browser.
+3.  You can also use the web version from this link: (https://rajat-ed.github.io/atom-archer/ )
 
 ## Controls
 
