@@ -1,32 +1,45 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Atom Archer</title>
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="style.css">
+    <title>Atom Archer</title>
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-
-<h1>Atom Archer</h1>
-
-<canvas id="gameCanvas" width="900" height="750"></canvas>
-
-<div id="inputPanel">
-  <div id="livesDisplay"></div>
-  <input type="text" id="inputField" placeholder="Enter atom name or symbol">
-</div>
-
-<div id="score">Score: 0</div>
-
-<div id="creator">Created by Rajat</div>
-
-<div id="gameOverCard">
-    <h2>Game Over!</h2>
-    <p>Your Score: <span id="finalScore">0</span></p>
-    <button id="restartButton">Restart Game</button>
-</div>
-
-<script src="script.js"></script>
-
+    <div id="game-container">
+        <div id="start-screen">
+            <h1>Atom Archer</h1>
+            <input id="input-name" placeholder="Enter your name" maxlength="20">
+            <button id="start-button">Start</button>
+            <div id="rules">
+                <p><span>Rules:</span></p>
+                <p>- Type the <span>atom's name</span> or <span>symbol</span> (e.g., "Hydrogen" or "H") to shoot.</p>
+                <p>- <span>Arrow</span> flies from the <span>bow</span> to blast atoms.</p>
+                <p>- Game over if an atom touches the <span>red line</span>.</p>
+                <p>- <span>Esc</span> to pause/resume.</p>
+                <p>- Speed increases at <span>50, 100, 150...</span> points.</p>
+            </div>
+        </div>
+        <div id="game-over-screen">
+            <h1>Game Over</h1>
+            <p id="final-score"></p>
+            <button id="restart-button">Play Again</button>
+            <button id="share-button">Share</button>
+        </div>
+        <div id="pause-screen">
+            <h1>Paused</h1>
+            <p>Press Esc to Resume</p>
+        </div>
+        <div id="title">Atom Archer</div>
+        <div id="score">Score: 0</div>
+        <div id="level">Level: 0</div>
+        <div id="level-up"></div>
+        <div id="creator">Created by Rajat</div>
+        <div id="bow"></div>
+        <input id="input-atom" placeholder="Type atom name or symbol">
+        <div id="reference-line"></div>
+    </div>
+    <script src="script.js"></script>
 </body>
 </html>
