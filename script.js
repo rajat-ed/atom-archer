@@ -215,7 +215,7 @@ function restartGame() {
 function shareScore() {
     const atomsHit = score / 10;
     const difficulty = currentFibonacciIndex;
-    const shareText = `Atom Archer\n${playerName} blasted ${atomsHit} atoms!\nScore: ${score}\nDifficulty Level: ${difficulty}\nPlay at: [your-link-here]`;
+    const shareText = `Atom Archer\n${playerName} blasted ${atomsHit} atoms!\nScore: ${score}\nDifficulty Level: ${difficulty}\nPlay at: [https://rajat-ed.github.io/atom-archer/]`;
     navigator.clipboard.writeText(shareText).then(() => {
         alert("Score copied to clipboard! Share it on social media!");
     });
