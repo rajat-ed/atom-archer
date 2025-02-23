@@ -1,354 +1,246 @@
-const canvas = document.getElementById('gameCanvas');
-const ctx = canvas.getContext('2d');
-const inputField = document.getElementById('inputField');
-const scoreDisplay = document.getElementById('score');
-const gameOverCard = document.getElementById('gameOverCard');
-const finalScoreDisplay = document.getElementById('finalScore');
-const restartButton = document.getElementById('restartButton');
-
-let score = 0;
-let atoms = [];
-let gameInterval;
-let baseSpeed = 1;
-let isPaused = false;
-const maxAtoms = 7;
-
-const elements = [
-    { number: 1, symbol: 'H', name: 'Hydrogen', weight: 1.008, valency: 1, color: '#455A64', shape: 'circle' },
-    { number: 2, symbol: 'He', name: 'Helium', weight: 4.0026, valency: 0, color: '#5D4037', shape: 'square' },
-    { number: 3, symbol: 'Li', name: 'Lithium', weight: 6.94, valency: 1, color: '#2E7D32', shape: 'triangle' },
-    { number: 4, symbol: 'Be', name: 'Beryllium', weight: 9.012182, valency: 2, color: '#0277BD', shape: 'rectangle' },
-    { number: 5, symbol: 'B', name: 'Boron', weight: 10.81, valency: 3, color: '#F9A825', shape: 'pentagon' },
-    { number: 6, symbol: 'C', name: 'Carbon', weight: 12.011, valency: 4, color: '#6A1B9A', shape: 'hexagon' },
-    { number: 7, symbol: 'N', name: 'Nitrogen', weight: 14.007, valency: 3, color: '#880E4F', shape: 'star' },
-    { number: 8, symbol: 'O', name: 'Oxygen', weight: 15.999, valency: 2, color: '#BF360C', shape: 'rhombus' },
-    { number: 9, symbol: 'F', name: 'Fluorine', weight: 18.998403163, valency: 1, color: '#3E2723', shape: 'ellipse' },
-    { number: 10, symbol: 'Ne', name: 'Neon', weight: 20.180, valency: 0, color: '#1A237E', shape: 'parallelogram' },
-    { number: 11, symbol: 'Na', name: 'Sodium', weight: 22.990, valency: 1, color: '#00695C', shape: 'trapezoid' },
-    { number: 12, symbol: 'Mg', name: 'Magnesium', weight: 24.305, valency: 2, color: '#263238', shape: 'octagon' },
-    { number: 13, symbol: 'Al', name: 'Aluminum', weight: 26.9815384, valency: 3, color: '#424242', shape: 'decagon' },
-    { number: 14, symbol: 'Si', name: 'Silicon', weight: 28.085, valency: 4, color: '#0D47A1', shape: 'septagon' },
-    { number: 15, symbol: 'P', name: 'Phosphorus', weight: 30.973761998, valency: 3, color: '#B71C1C', shape: 'heart' },
-    { number: 16, symbol: 'S', name: 'Sulfur', weight: 32.06, valency: 2, color: '#827717', shape: 'invtriangle' },
-    { number: 17, symbol: 'Cl', name: 'Chlorine', weight: 35.45, valency: 1, color: '#E65100', shape: 'shield' },
-    { number: 18, symbol: 'Ar', name: 'Argon', weight: 39.948, valency: 0, color: '#33691E', shape: 'invcircle' },
-    { number: 19, symbol: 'K', name: 'Potassium', weight: 39.0983, valency: 1, color: '#8E24AA', shape: 'flower' },
-    { number: 20, symbol: 'Ca', name: 'Calcium', weight: 40.078, valency: 2, color: '#1B5E20', shape: 'drop' },
-    { number: 21, symbol: 'Sc', name: 'Scandium', weight: 44.955908, valency: 3, color: '#00838F', shape: 'infinity' },
-    { number: 22, symbol: 'Ti', name: 'Titanium', weight: 47.867, valency: 4, color: '#311B92', shape: 'moon' },
-    { number: 23, symbol: 'V', name: 'Vanadium', weight: 50.9415, valency: 5, color: '#3E5D4F', shape: 'cross' },
-    { number: 24, symbol: 'Cr', name: 'Chromium', weight: 51.9961, valency: 6, color: '#9E9D24', shape: 'lightning' },
-    { number: 25, symbol: 'Mn', name: 'Manganese', weight: 54.938044, valency: 7, color: '#D84315', shape: 'atom' },
-    { number: 26, symbol: 'Fe', name: 'Iron', weight: 55.845, valency: 2, color: '#212121', shape: 'dice' },
-    { number: 27, symbol: 'Co', name: 'Cobalt', weight: 58.933194, valency: 2, color: '#004D40', shape: 'molecule' },
-    { number: 28, symbol: 'Ni', name: 'Nickel', weight: 58.6934, valency: 2, color: '#1A237E', shape: 'barcode' },
-    { number: 29, symbol: 'Cu', name: 'Copper', weight: 63.546, valency: 2, color: '#263238', shape: 'radioactive' },
-    { number: 30, symbol: 'Zn', name: 'Zinc', weight: 65.38, valency: 2, color: '#3E2723', shape: 'chess' }
+// Atom data (Elements 1-30)
+const atoms = [
+    { name: "Hydrogen", symbol: "H", number: 1, valency: 1, weight: 1.008, color: "#ff6b6b" },
+    { name: "Helium", symbol: "He", number: 2, valency: 0, weight: 4.002, color: "#4ecdc4" },
+    { name: "Lithium", symbol: "Li", number: 3, valency: 1, weight: 6.941, color: "#ffcc00" },
+    { name: "Beryllium", symbol: "Be", number: 4, valency: 2, weight: 9.012, color: "#96c93d" },
+    { name: "Boron", symbol: "B", number: 5, valency: 3, weight: 10.81, color: "#45b7d1" },
+    { name: "Carbon", symbol: "C", number: 6, valency: 4, weight: 12.01, color: "#ff9f1c" },
+    { name: "Nitrogen", symbol: "N", number: 7, valency: 3, weight: 14.01, color: "#ff6b6b" },
+    { name: "Oxygen", symbol: "O", number: 8, valency: 2, weight: 16.00, color: "#4ecdc4" },
+    { name: "Fluorine", symbol: "F", number: 9, valency: 1, weight: 19.00, color: "#96c93d" },
+    { name: "Neon", symbol: "Ne", number: 10, valency: 0, weight: 20.18, color: "#ffcc00" },
+    { name: "Sodium", symbol: "Na", number: 11, valency: 1, weight: 22.99, color: "#45b7d1" },
+    { name: "Magnesium", symbol: "Mg", number: 12, valency: 2, weight: 24.31, color: "#ff9f1c" },
+    { name: "Aluminum", symbol: "Al", number: 13, valency: 3, weight: 26.98, color: "#ff6b6b" },
+    { name: "Silicon", symbol: "Si", number: 14, valency: 4, weight: 28.09, color: "#4ecdc4" },
+    { name: "Phosphorus", symbol: "P", number: 15, valency: 5, weight: 30.97, color: "#96c93d" },
+    { name: "Sulfur", symbol: "S", number: 16, valency: 2, weight: 32.06, color: "#ffcc00" },
+    { name: "Chlorine", symbol: "Cl", number: 17, valency: 1, weight: 35.45, color: "#45b7d1" },
+    { name: "Argon", symbol: "Ar", number: 18, valency: 0, weight: 39.95, color: "#ff9f1c" },
+    { name: "Potassium", symbol: "K", number: 19, valency: 1, weight: 39.10, color: "#ff6b6b" },
+    { name: "Calcium", symbol: "Ca", number: 20, valency: 2, weight: 40.08, color: "#4ecdc4" },
+    { name: "Scandium", symbol: "Sc", number: 21, valency: 3, weight: 44.96, color: "#96c93d" },
+    { name: "Titanium", symbol: "Ti", number: 22, valency: 4, weight: 47.87, color: "#ffcc00" },
+    { name: "Vanadium", symbol: "V", number: 23, valency: 5, weight: 50.94, color: "#45b7d1" },
+    { name: "Chromium", symbol: "Cr", number: 24, valency: 3, weight: 52.00, color: "#ff9f1c" },
+    { name: "Manganese", symbol: "Mn", number: 25, valency: 2, weight: 54.94, color: "#ff6b6b" },
+    { name: "Iron", symbol: "Fe", number: 26, valency: 3, weight: 55.85, color: "#4ecdc4" },
+    { name: "Cobalt", symbol: "Co", number: 27, valency: 2, weight: 58.93, color: "#96c93d" },
+    { name: "Nickel", symbol: "Ni", number: 28, valency: 2, weight: 58.69, color: "#ffcc00" },
+    { name: "Copper", symbol: "Cu", number: 29, valency: 2, weight: 63.55, color: "#45b7d1" },
+    { name: "Zinc", symbol: "Zn", number: 30, valency: 2, weight: 65.38, color: "#ff9f1c" }
 ];
 
+let playerName = "";
+let score = 0;
+let gameActive = false;
+let isPaused = false;
+let atomInterval;
+let speedMultiplier = 1.0;
+let currentFibonacciIndex = 0;
+
+const fibonacciIncrements = [1, 2, 3, 5, 8, 13, 21, 34, 55, 89]; // % increases
+const scoreThresholds = fibonacciIncrements.map((_, i) => (i + 1) * 50); // 50, 100, 150, 200, 250...
+
+const gameContainer = document.getElementById("game-container");
+const startScreen = document.getElementById("start-screen");
+const gameOverScreen = document.getElementById("game-over-screen");
+const pauseScreen = document.getElementById("pause-screen");
+const inputName = document.getElementById("input-name");
+const inputAtom = document.getElementById("input-atom");
+const scoreDisplay = document.getElementById("score");
+const levelDisplay = document.getElementById("level");
+const levelUpDisplay = document.getElementById("level-up");
+const finalScore = document.getElementById("final-score");
+const bow = document.getElementById("bow");
+const referenceLine = document.getElementById("reference-line");
+const startButton = document.getElementById("start-button");
+const restartButton = document.getElementById("restart-button");
+const shareButton = document.getElementById("share-button");
+
 function startGame() {
-    score = 0;
-    atoms = [];
-    baseSpeed = 1;
+    playerName = inputName.value.trim() || "Player";
+    startScreen.style.display = "none";
+    inputAtom.style.display = "block";
+    bow.style.display = "block";
+    referenceLine.style.display = "block";
+    inputAtom.focus();
+    gameActive = true;
     isPaused = false;
-    scoreDisplay.textContent = `Score: ${score}`;
-    gameInterval = setInterval(gameLoop, 30);
-
-    gameOverCard.style.display = 'none';
+    score = 0;
+    speedMultiplier = 1.0;
+    currentFibonacciIndex = 0;
+    updateScore();
+    updateLevel();
+    spawnAtoms();
+    inputAtom.addEventListener("input", () => {
+        if (!isPaused) {
+            bow.classList.add("pulling");
+            setTimeout(() => bow.classList.remove("pulling"), 200);
+            checkInput();
+        }
+    });
+    document.addEventListener("keydown", handlePause);
 }
 
-
-function getReadableTextColor(backgroundColor) {
-    const r = parseInt(backgroundColor.slice(1, 3), 16);
-    const g = parseInt(backgroundColor.slice(3, 5), 16);
-    const b = parseInt(backgroundColor.slice(5, 7), 16);
-    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
-    return luminance > 0.5 ? 'black' : 'white';
+function spawnAtoms() {
+    atomInterval = setInterval(() => {
+        if (!gameActive || isPaused) return;
+        const atomData = atoms[Math.floor(Math.random() * atoms.length)];
+        const atom = document.createElement("div");
+        atom.classList.add("atom");
+        atom.style.backgroundColor = atomData.color;
+        atom.style.width = "80px";
+        atom.style.height = "80px";
+        atom.style.left = `${Math.random() * (window.innerWidth - 80)}px`;
+        atom.style.top = "-80px";
+        atom.innerHTML = `#${atomData.number}<br>V:${atomData.valency}<br>W:${atomData.weight.toFixed(2)}`;
+        atom.dataset.name = atomData.name.toLowerCase();
+        atom.dataset.symbol = atomData.symbol.toLowerCase();
+        atom.dataset.weight = atomData.weight;
+        gameContainer.appendChild(atom);
+        animateAtom(atom);
+    }, 2000);
 }
 
-function createAtom() {
-    if (atoms.length < 7) {
-        const randomIndex = Math.floor(Math.random() * elements.length);
-        const element = elements[randomIndex];
-        const atom = {
-            x: Math.random() * canvas.width,
-            y: 0,
-            element: element,
-            speed: baseSpeed * (2 - (element.weight / 70)),
-            color: element.color,
-            textColor: '#FFFFFF',
-            shape: element.shape
-        };
-        atoms.push(atom);
-    }
-}
-
-function updateAtom(atom) {
-    atom.y += atom.speed;
-    if (atom.y > canvas.height) {
-            endGame();
-            return true;
-    }
-    return false;
-}
-
-function renderAtom(atom) {
-    const fontSize = 12;
-    ctx.fillStyle = atom.color;
-    ctx.beginPath();
-    drawShape(ctx, atom.x, atom.y, atom.element.shape, 25);
-    ctx.fill();
-
-    ctx.font = `${fontSize}px -apple-system, BlinkMacSystemFont, sans-serif`;
-    ctx.fillStyle = atom.textColor;
-    ctx.textAlign = 'center';
-
-    ctx.fillText(atom.element.number, atom.x, atom.y - fontSize);
-    ctx.fillText(atom.element.weight.toFixed(2), atom.x, atom.y + fontSize);
-    ctx.fillText(atom.element.valency, atom.x + 15, atom.y);
-
-    ctx.closePath();
-}
-
-function drawShape(ctx, x, y, shape, size) {
-    switch (shape) {
-        case 'square':
-            ctx.fillRect(x - size, y - size, 2 * size, 2 * size);
-            break;
-        case 'rectangle':
-            ctx.fillRect(x - size - 10, y - size + 5, 2 * size + 20, 2 * size - 10);
-            break;
-        case 'triangle':
-            ctx.moveTo(x, y - size);
-            ctx.lineTo(x - size, y + size);
-            ctx.lineTo(x + size, y + size);
-            ctx.closePath();
-            break;
-        case 'rhombus':
-            ctx.moveTo(x - size, y);
-            ctx.lineTo(x, y - size);
-            ctx.lineTo(x + size, y);
-            ctx.lineTo(x, y + size);
-            ctx.closePath();
-            break;
-        case 'ellipse':
-            ctx.ellipse(x, y, size + 5, size - 5, 0, 0, 2 * Math.PI);
-            break;
-        case 'parallelogram':
-            ctx.moveTo(x - size - 5, y - size + 5);
-            ctx.lineTo(x + size + 5, y - size + 5);
-            ctx.lineTo(x + size - 5, y + size - 5);
-            ctx.lineTo(x - size -15, y + size - 5);
-            ctx.closePath();
-            break;
-        case 'trapezoid':
-            ctx.moveTo(x - size, y + size);
-            ctx.lineTo(x + size, y + size);
-            ctx.lineTo(x + size / 2, y - size);
-            ctx.lineTo(x - size / 2, y - size);
-            ctx.closePath();
-            break;
-        case 'octagon':
-            const sides = 8;
-            for (let i = 0; i < sides; i++) {
-                const angle = 2 * Math.PI / sides * i;
-                const xCoord = x + size * Math.cos(angle);
-                const yCoord = y + size * Math.sin(angle);
-                if (i === 0) {
-                    ctx.moveTo(xCoord, yCoord);
-                } else {
-                    ctx.lineTo(xCoord, yCoord);
-                }
-            }
-            ctx.closePath();
-            break;
-        case 'pentagon':
-            const angleOffset = -Math.PI / 2; // To point the pentagon upwards
-            for (let i = 0; i < 5; i++) {
-                const angle = 2 * Math.PI / 5 * i + angleOffset;
-                const xCoord = x + size * Math.cos(angle);
-                const yCoord = y + size * Math.sin(angle);
-                if (i === 0) {
-                    ctx.moveTo(xCoord, yCoord);
-                } else {
-                    ctx.lineTo(xCoord, yCoord);
-                }
-            }
-            ctx.closePath();
-            break;
-       case 'hexagon':
-            for (let i = 0; i < 6; i++) {
-                const angle = 2 * Math.PI / 6 * i;
-                const xCoord = x + size * Math.cos(angle);
-                const yCoord = y + size * Math.sin(angle);
-                if (i === 0) {
-                    ctx.moveTo(xCoord, yCoord);
-                } else {
-                    ctx.lineTo(xCoord, yCoord);
-                }
-            }
-            ctx.closePath();
-            break;
-        case 'star':
-                const spikes = 5;
-                const outerRadius = size;
-                const innerRadius = size / 2;
-                let rot = Math.PI / 2 * 3;
-                let xCoord = x;
-                let yCoord = y;
-                let step = Math.PI / spikes;
-
-                ctx.moveTo(xCoord, yCoord - outerRadius)
-                for (i = 0; i < spikes; i++) {
-                    xCoord = x + Math.cos(rot) * outerRadius;
-                    yCoord = y + Math.sin(rot) * outerRadius;
-                    ctx.lineTo(xCoord, yCoord)
-                    rot += step
-
-                    xCoord = x + Math.cos(rot) * innerRadius;
-                    yCoord = y + Math.sin(rot) * innerRadius;
-                    ctx.lineTo(xCoord, yCoord)
-                    rot += step
-                }
-                ctx.lineTo(x, y - outerRadius);
-                ctx.closePath();
-                break;
-         case 'shield':
-                ctx.moveTo(x, y - size); // Top point
-                ctx.lineTo(x + size, y);   // Right point
-                ctx.lineTo(x + size, y + size / 2);  // Bottom Right
-                ctx.quadraticCurveTo(x, y + size, x - size, y + size / 2);  // Bottom Curve
-                ctx.lineTo(x - size, y);  // Left Point
-                ctx.closePath();
-                break;
-         case 'invtriangle':
-            ctx.moveTo(x, y + size); //Top point
-            ctx.lineTo(x - size, y - size);   // Right point
-            ctx.lineTo(x + size, y - size);  // Bottom Right
-            ctx.closePath();
-            break;
-         case 'invcircle':
-            ctx.arc(x, y, size - 10, 0, Math.PI);
-            break;
-            // Add more shapes here
-        default: // circle
-            ctx.arc(x, y, size, 0, Math.PI * 2);
-    }
-}
-
-function checkInput(input) {
-    const lowerInput = input.toLowerCase();
-    for (let i = 0; i < atoms.length; i++) {
-        const atom = atoms[i];
-        if (
-            atom.element.name.toLowerCase() === lowerInput ||
-            atom.element.symbol.toLowerCase() === lowerInput
-        ) {
-            handleHit(atom);
+function animateAtom(atom) {
+    let pos = -80;
+    const baseSpeed = 1;
+    const weightFactor = 1 - (atom.dataset.weight / 70);
+    let fallSpeed = baseSpeed * weightFactor * speedMultiplier;
+    const atomHeight = 80;
+    const linePosition = window.innerHeight - 100;
+    const animation = setInterval(() => {
+        if (!gameActive || isPaused || !atom.parentElement) {
+            clearInterval(animation);
             return;
         }
+        pos += fallSpeed;
+        atom.style.top = `${pos}px`;
+        const atomBottom = pos + atomHeight;
+        if (atomBottom >= linePosition && pos >= 0) {
+            gameOver();
+            clearInterval(animation);
+            atom.remove();
+        }
+    }, 20);
+}
+
+function checkInput() {
+    const input = inputAtom.value.trim().toLowerCase();
+    const atomsOnScreen = document.querySelectorAll(".atom");
+    atomsOnScreen.forEach(atom => {
+        if (input === atom.dataset.name || input === atom.dataset.symbol) {
+            shootArrow(atom);
+            inputAtom.value = "";
+        }
+    });
+}
+
+function shootArrow(target) {
+    const arrow = document.createElement("div");
+    arrow.classList.add("arrow");
+    arrow.style.left = `${target.offsetLeft + target.offsetWidth / 2}px`;
+    arrow.style.bottom = "60px";
+    gameContainer.appendChild(arrow);
+
+    const arrowSpeed = 0.5;
+    const distance = window.innerHeight - target.offsetTop - 60;
+    const speedPxPerSec = window.innerHeight / arrowSpeed;
+    const timeToHit = distance / speedPxPerSec * 1000;
+
+    setTimeout(() => {
+        if (target.parentElement) {
+            target.classList.add("blast");
+            setTimeout(() => {
+                if (target.parentElement) {
+                    target.remove();
+                    score += 10;
+                    updateScore();
+                    checkSpeedIncrease();
+                }
+            }, 300);
+            arrow.remove();
+        }
+    }, timeToHit);
+}
+
+function checkSpeedIncrease() {
+    const nextThreshold = scoreThresholds[currentFibonacciIndex];
+    if (score >= nextThreshold && currentFibonacciIndex < fibonacciIncrements.length) {
+        const increase = fibonacciIncrements[currentFibonacciIndex] / 100 + 1;
+        speedMultiplier *= increase;
+        currentFibonacciIndex++;
+        updateLevel();
+        showLevelUp();
     }
 }
 
-function handleHit(atom) {
-    score += 10;
+function updateScore() {
     scoreDisplay.textContent = `Score: ${score}`;
-    createBlast(atom.x, atom.y, atom.color);
-    atoms = atoms.filter(a => a !== atom);
-    increaseDifficulty();
 }
 
-function increaseDifficulty() {
-    if (score % 100 === 0 && score > 0) {
-        baseSpeed *= 1.01;
-        console.log("Speed increased to: " + baseSpeed);
+function updateLevel() {
+    levelDisplay.textContent = `Level: ${currentFibonacciIndex}`;
+}
+
+function showLevelUp() {
+    levelUpDisplay.textContent = `Level Up! Level ${currentFibonacciIndex}`;
+    levelUpDisplay.classList.add("show");
+    setTimeout(() => {
+        levelUpDisplay.classList.remove("show");
+    }, 2000);
+}
+
+function gameOver() {
+    if (!gameActive) return;
+    gameActive = false;
+    clearInterval(atomInterval);
+    inputAtom.style.display = "none";
+    bow.style.display = "none";
+    referenceLine.style.display = "none";
+    gameOverScreen.style.display = "block";
+    finalScore.textContent = `${playerName}, your score: ${score}`;
+    document.querySelectorAll(".atom").forEach(atom => atom.remove());
+    document.removeEventListener("keydown", handlePause);
+}
+
+function restartGame() {
+    gameOverScreen.style.display = "none";
+    inputAtom.value = "";
+    startGame();
+}
+
+function shareScore() {
+    const atomsHit = score / 10;
+    const difficulty = currentFibonacciIndex;
+    const shareText = `Atom Archer\n${playerName} blasted ${atomsHit} atoms!\nScore: ${score}\nDifficulty Level: ${difficulty}\nPlay at: [your-link-here]`;
+    navigator.clipboard.writeText(shareText).then(() => {
+        alert("Score copied to clipboard! Share it on social media!");
+    });
+}
+
+function handlePause(event) {
+    if (event.key === "Escape" && gameActive) {
+        togglePause();
     }
 }
 
-let blasts = [];
-
-function createBlast(x, y, color) {
-    const blast = {
-        x: x,
-        y: y,
-        color: color,
-        size: 10,
-        life: 10
-    };
-    blasts.push(blast);
-}
-
-function updateBlast(blast) {
-    blast.size += 2;
-    blast.life--;
-}
-
-function renderBlast(blast) {
-    ctx.beginPath();
-    ctx.arc(blast.x, blast.y, blast.size, 0, Math.PI * 2);
-    ctx.fillStyle = blast.color;
-    ctx.globalAlpha = blast.life / 10;
-    ctx.fill();
-    ctx.globalAlpha = 1;
-    ctx.closePath();
-}
-
-function gameLoop() {
+function togglePause() {
+    isPaused = !isPaused;
+    pauseScreen.style.display = isPaused ? "block" : "none";
     if (!isPaused) {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        if (Math.random() < 0.02) {
-            createAtom();
-        }
-
-        for (let i = 0; i < blasts.length; i++) {
-            const blast = blasts[i];
-            updateBlast(blast);
-            renderBlast(blast);
-
-            if (blast.life <= 0) {
-                blasts.splice(i, 1);
-                i--;
-            }
-        }
-
-        for (let i = 0; i < atoms.length; i++) {
-            const atom = atoms[i];
-            const shouldDelete = updateAtom(atom);
-             if (shouldDelete) {
-                 atoms.splice(i, 1);
-                 i--;
-             }
-              else {
-                 renderAtom(atom);
-              }
+        inputAtom.focus();
     }
 }
-}
 
-function endGame() {
-    clearInterval(gameInterval);
-    finalScoreDisplay.textContent = score;
-    gameOverCard.style.display = 'block';
-}
-
-document.addEventListener('keydown', (event) => {
-    if (event.key === 'Enter') {
-        checkInput(inputField.value);
-        inputField.value = '';
-    }
-    if (event.key === 'Escape') {
-        isPaused = !isPaused;
-        if (isPaused) {
-            clearInterval(gameInterval);
-        } else {
-            gameInterval = setInterval(gameLoop, 30);
-        }
+// Event listeners
+startButton.addEventListener("click", startGame);
+restartButton.addEventListener("click", restartGame);
+shareButton.addEventListener("click", shareScore);
+inputName.addEventListener("keydown", (event) => {
+    if (event.key === "Enter") {
+        startGame();
     }
 });
-
- restartButton.addEventListener('click', () => {
-        startGame();
-    });
-
-startGame();
